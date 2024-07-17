@@ -12,25 +12,37 @@ defmodule RomanCliApp do
       :world
 
   """
-  def askForName(counter) do
+  def askForNames(names) do
     name = IO.gets("")
     name = String.trim(name)
 
     if String.length(name) > 0 do
-      askForName(Map.update(counter, name, 1, &(&1 + 1)))
+      askForNames(names ++ [name])
     else
-      counter
+      names
     end
   end
 
+  def printNames(names) do
+
+    counter = %{}
+
+    Enum.reduce(names, counter, fn name, counter ->
+      updated_counter = Map.update(counter, name, 1, &(&1 + 1))
+
+      IO.puts("#{name} #{RomanNumberConverter.get_roman_num(Map.get(updated_counter, name))}")
+
+      updated_counter
+    end)
+  end
+
   def main(_args) do
-    IO.puts("RomanCLIApp é uma ferramenta de linha de comando que restaura e organiza os registros históricos da família real de Cumbúquia\nDigite abaixo os nomes dos membros da familia real, quando terminar digite uma linha em branco:")
+    IO.puts(
+      "RomanCLIApp é uma ferramenta de linha de comando que restaura e organiza os registros históricos da família real de Cumbúquia\n\nDigite abaixo os nomes dos membros da familia real, quando terminar digite uma linha em branco:\n"
+    )
 
-    counter = askForName(%{})
+    names = askForNames([])
 
-    counter_keys = Map.keys(counter)
-
-    for key <- counter_keys,
-        do: IO.puts("#{key} #{RomanNumberConverter.get_roman_num(Map.get(counter, key))}")
+    printNames(names)
   end
 end
